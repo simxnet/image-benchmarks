@@ -1,6 +1,6 @@
-import {run, bench, group, baseline} from 'mitata';
+import {run, bench, group} from 'mitata';
 import Jimp from "jimp-compact";
-import { Image } from "imagescript";
+import {Image} from "imagescript";
 import Sharp from "sharp";
 
 
@@ -19,10 +19,25 @@ group("2000x2000 (black) (png)", () => {
     bench("Black image 2000x2000 (imagescript)",
         () => new Image(2000, 2000).fill(0x00000ff))
     bench("Black image 2000x2000 (sharp)",
-        () => Sharp().clone().resize(2000, 2000).tint("#000000"))
+        () => Sharp({
+            create: {
+                width: 2000,
+                height: 2000,
+                channels: 4,
+                background: {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                    alpha: 1
+                }
+            }
+        }))
 })
 
-run({ json: true, silent: true }).then(o => Bun.write("./result.json", Buffer.from(JSON.stringify(o.benchmarks), "utf-8")))
+run({
+    json: true,
+    silent: true
+}).then(o => Bun.write("./result.json", Buffer.from(JSON.stringify(o.benchmarks), "utf-8")))
 
 await run({
     silent: false, // enable/disable stdout output
