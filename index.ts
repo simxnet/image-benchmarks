@@ -1,4 +1,4 @@
-import {run, bench, group} from 'mitata';
+import {bench, group, run} from 'mitata';
 import Jimp from "jimp-compact";
 import {Image} from "imagescript";
 import Sharp from "sharp";
@@ -10,7 +10,19 @@ group("1000x1000 (black) (png)", () => {
     bench("Black image 1000x1000 (imagescript)",
         () => new Image(1000, 1000).fill(0x000000ff))
     bench("Black image 1000x1000 (sharp)",
-        () => Sharp().clone().resize(1000, 1000).tint("#000000"))
+        () => Sharp({
+            create: {
+                width: 1000,
+                height: 1000,
+                channels: 4,
+                background: {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                    alpha: 1
+                }
+            }
+        }))
 })
 
 group("2000x2000 (black) (png)", () => {
