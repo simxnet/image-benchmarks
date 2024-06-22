@@ -3,20 +3,24 @@ import Jimp from "jimp-compact";
 import { Image } from "imagescript";
 import Sharp from "sharp";
 import { Canvas as NapiCanvas } from "canvas-constructor/napi-rs";
-// import { Canvas as SkiaCanvas } from "canvas-constructor/skia";
-// import { Canvas as CairoCanvas } from "canvas-constructor/cairo";
-import { noop } from "./util";
+import { readPackageJSON } from "pkg-types";
+
+import { noop, type Versions } from "./util";
+
+const { dependencies } = (await readPackageJSON()) as unknown as {
+	dependencies: Versions;
+};
 
 group("1000x1000 (black) (png)", () => {
-	bench("Black image 1000x1000 (jimp-compact)", () =>
+	bench(`jimp-compact ${dependencies["jimp-compact"]}`, () =>
 		Jimp.read(1000, 1000, 0x000000ff).then((x) =>
 			x.getBuffer("image/png", noop),
 		),
 	);
-	bench("Black image 1000x1000 (imagescript)", () =>
+	bench(`imagescript ${dependencies.imagescript}`, () =>
 		new Image(1000, 1000).fill(0x000000ff).encode(),
 	);
-	bench("Black image 1000x1000 (sharp)", () =>
+	bench(`sharp ${dependencies.sharp}`, () =>
 		Sharp({
 			create: {
 				width: 1000,
@@ -33,7 +37,7 @@ group("1000x1000 (black) (png)", () => {
 			.png()
 			.toBuffer(),
 	);
-	bench("Black image 1000x1000 (canvas-constructor, napi-rs)", () =>
+	bench(`canvas-constructor, napi-rs ${dependencies["@napi-rs/canvas"]}`, () =>
 		new NapiCanvas(1000, 1000).png(),
 	);
 	// bench("Black image 1000x1000 (canvas-constructor, skia)", () =>
@@ -45,15 +49,15 @@ group("1000x1000 (black) (png)", () => {
 });
 
 group("2000x2000 (black) (png)", () => {
-	bench("Black image 2000x2000 (jimp-compact)", () =>
+	bench(`jimp-compact ${dependencies["jimp-compact"]}`, () =>
 		Jimp.read(2000, 2000, 0x000000ff).then((x) =>
 			x.getBuffer("image/png", noop),
 		),
 	);
-	bench("Black image 2000x2000 (imagescript)", () =>
+	bench(`imagescript ${dependencies.imagescript}`, () =>
 		new Image(2000, 2000).fill(0x000000ff).encode(),
 	);
-	bench("Black image 2000x2000 (sharp)", () =>
+	bench(`sharp ${dependencies.sharp}`, () =>
 		Sharp({
 			create: {
 				width: 2000,
@@ -70,7 +74,7 @@ group("2000x2000 (black) (png)", () => {
 			.png()
 			.toBuffer(),
 	);
-	bench("Black image 2000x2000 (canvas-constructor, napi-rs)", () =>
+	bench(`canvas-constructor, napi-rs ${dependencies["@napi-rs/canvas"]}`, () =>
 		new NapiCanvas(2000, 2000).png(),
 	);
 	// bench("Black image 2000x2000 (canvas-constructor, skia)", () =>
